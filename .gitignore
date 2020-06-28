@@ -1,0 +1,6 @@
+*.jar
+out/
+natives/
+.idea
+*.iml
+*.log
