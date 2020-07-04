@@ -2,6 +2,7 @@ package barrage3d;
 
 import barrage3d.display.GLDisplay;
 import barrage3d.glrenderer.GLRenderer;
+import barrage3d.keyboard.VirtualKey;
 import barrage3d.keyboard.VirtualKeyReceiver;
 import barrage3d.movings.*;
 import barrage3d.taskcallable.TaskCallable;
@@ -35,12 +36,12 @@ public class Main {
 
         Player player = new NormalPlayer(0, 0, 1);
 
-        EnumMap<VirtualKeyReceiver.VirtualKey, Short> keyAllocation = new EnumMap<>(VirtualKeyReceiver.VirtualKey.class);
-        keyAllocation.put(VirtualKeyReceiver.VirtualKey.Escape, VK_ESCAPE);
-        keyAllocation.put(VirtualKeyReceiver.VirtualKey.Up, VK_UP);
-        keyAllocation.put(VirtualKeyReceiver.VirtualKey.Down, VK_DOWN);
-        keyAllocation.put(VirtualKeyReceiver.VirtualKey.Left, VK_LEFT);
-        keyAllocation.put(VirtualKeyReceiver.VirtualKey.Right, VK_RIGHT);
+        EnumMap<VirtualKey, Short> keyAllocation = new EnumMap<>(VirtualKey.class);
+        keyAllocation.put(VirtualKey.Escape, VK_ESCAPE);
+        keyAllocation.put(VirtualKey.Up, VK_UP);
+        keyAllocation.put(VirtualKey.Down, VK_DOWN);
+        keyAllocation.put(VirtualKey.Left, VK_LEFT);
+        keyAllocation.put(VirtualKey.Right, VK_RIGHT);
 
         keyReceiver = new VirtualKeyReceiver(keyAllocation);
         keyReceiver.consumeKeyReceiver(glDisplay::bindKeyReceiver);
@@ -57,27 +58,11 @@ public class Main {
             }
         }
 
-        taskCallableList.add((arg) -> {
-            float[] speed = new float[3];
-            final float sqrt2 = 1.41421356F;
-
-            speed[1] = keyReceiver.isPressed(VirtualKeyReceiver.VirtualKey.Up, 1) ? 1 : 0;
-            speed[1] += keyReceiver.isPressed(VirtualKeyReceiver.VirtualKey.Down, 1) ? -1 : 0;
-            speed[0] = keyReceiver.isPressed(VirtualKeyReceiver.VirtualKey.Left, 1) ? -1 : 0;
-            speed[0] += keyReceiver.isPressed(VirtualKeyReceiver.VirtualKey.Right, 1) ? 1 : 0;
-
-            if (speed[0] != 0 && speed[1] != 0) {
-                speed[0] *= sqrt2 / 2;
-                speed[1] *= sqrt2 / 2;
-            }
-
-            player.moveBy(speed);
-        });
-
+        taskCallableList.add(new PlayerMover(player, keyReceiver));
         taskCallableList.add((arg) -> bullet.forEach(Bullet::move));
 
         glRendererList.add(new PlayerRenderer(player));
-        glRendererList.add(((glDisplay1, glAutoDrawable) -> {
+        glRendererList.add((glDisplay1, glAutoDrawable) -> {
             GL2 gl2 = glAutoDrawable.getGL().getGL2();
             bullet.forEach(b -> {
                         gl2.glPushMatrix();
@@ -88,7 +73,7 @@ public class Main {
                         gl2.glPopMatrix();
                     }
             );
-        }));
+        });
     }
 
     public static void task(TaskCallable.TaskCallArgument arg) {

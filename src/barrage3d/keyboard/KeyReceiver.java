@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class KeyReceiver implements KeyListener {
+class KeyReceiver implements KeyListener {
     protected Map<Short, Integer> pressedFrame = new HashMap<>();
 
     public KeyReceiver(short... keys) {

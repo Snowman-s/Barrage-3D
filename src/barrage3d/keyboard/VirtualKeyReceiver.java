@@ -1,9 +1,11 @@
 package barrage3d.keyboard;
 
+import com.jogamp.newt.event.KeyListener;
+
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
-public class VirtualKeyReceiver {
+public class VirtualKeyReceiver implements KeyInput{
     private final KeyReceiver keyReceiver;
     private final EnumMap<VirtualKey, Short> keyData;
 
@@ -23,15 +25,11 @@ public class VirtualKeyReceiver {
         keyReceiver.resetKey(keyData.get(virtualKey));
     }
 
-    public void consumeKeyReceiver(Consumer<? super KeyReceiver> keyReceiverConsumer) {
+    public void consumeKeyReceiver(Consumer<? super KeyListener> keyReceiverConsumer) {
         keyReceiverConsumer.accept(keyReceiver);
     }
 
     public void increaseKeyPressedFrame() {
         keyReceiver.increaseKeyPressedFrame();
-    }
-
-    public enum VirtualKey {
-        Up, Down, Left, Right, Escape;
     }
 }

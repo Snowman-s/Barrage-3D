@@ -1,7 +1,6 @@
 package barrage3d.display;
 
 import barrage3d.glrenderer.GLRenderer;
-import barrage3d.keyboard.KeyReceiver;
 import barrage3d.taskcallable.TaskCallable;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
