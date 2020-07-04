@@ -3,6 +3,9 @@ package barrage3d.utility;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * 要求に応じた色配列を返します。
+ */
 public class ColorUtility {
     private ColorUtility() {
     }

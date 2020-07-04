@@ -3,6 +3,7 @@ package barrage3d.display;
 import barrage3d.glrenderer.GLRenderer;
 import barrage3d.keyboard.KeyReceiver;
 import barrage3d.taskcallable.TaskCallable;
+import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -49,16 +50,8 @@ public class GLDisplay {
         return glDisplayInnerClass.glut;
     }
 
-    public boolean isKeyPressed(short key) {
-        return glDisplayInnerClass.keyReceiver.isKeyPressed(key);
-    }
-
-    public void increaseKeyPressedCount() {
-        glDisplayInnerClass.keyReceiver.increaseKeyPressedFrame();
-    }
-
-    public void resetKey(short key) {
-        glDisplayInnerClass.keyReceiver.resetKey(key);
+    public void bindKeyReceiver(KeyListener keyListener) {
+        glDisplayInnerClass.glWindow.addKeyListener(keyListener);
     }
 
     public void endWindow() {
@@ -75,8 +68,6 @@ public class GLDisplay {
 
         private final GLU glu;
         private final GLUT glut;
-
-        private final KeyReceiver keyReceiver;
 
         private final TaskCallable onDisplay;
         private final GLRenderer onRender;
@@ -109,8 +100,6 @@ public class GLDisplay {
             animator.add(glWindow);
             animator.start();
             glWindow.setVisible(true);
-
-            glWindow.addKeyListener(keyReceiver = new KeyReceiver());
         }
 
         @Override
@@ -148,8 +137,8 @@ public class GLDisplay {
             GL2 gl = glAutoDrawable.getGL().getGL2();
             gl.glLoadIdentity();
             this.widthByHeight = (float) (width = i2) / (float) (height = i3);
-            glu.gluPerspective(30.0, widthByHeight, 0.01, 100.0);
-            glu.gluLookAt(0, 2, -1.5, 0, 0, 0, 0, 0, 1);
+            glu.gluPerspective(30.0, widthByHeight, 3.5, 100.0);
+            glu.gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
         }
     }
 }

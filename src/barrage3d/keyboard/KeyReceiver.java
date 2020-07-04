@@ -7,28 +7,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static com.jogamp.newt.event.KeyEvent.*;
-
 public class KeyReceiver implements KeyListener {
-    protected Map<Short, Integer> receiveKeyPressedFrame = new HashMap<>();
+    protected Map<Short, Integer> pressedFrame = new HashMap<>();
 
-    public KeyReceiver() {
-        this.addReceiveKey(VK_R);
-        this.addReceiveKey(VK_ENTER);
-        this.addReceiveKey(VK_ESCAPE);
-    }
-
-    private void addReceiveKey(short key) {
-        if (!receiveKeyPressedFrame.containsKey(key)) {
-            receiveKeyPressedFrame.put(key, -1);
+    public KeyReceiver(short... keys) {
+        for (short key : keys) {
+            this.addReceiveKey(key);
         }
     }
 
-    public boolean isKeyPressed(short key) {
-        if (!receiveKeyPressedFrame.containsKey(key)) {
+    public void addReceiveKey(short key) {
+        if (!pressedFrame.containsKey(key)) {
+            pressedFrame.put(key, -1);
+        }
+    }
+
+    public int pressedFrame(short key) {
+        if (!pressedFrame.containsKey(key)) {
             throw new IllegalArgumentException("登録されていないKeyを呼び出しました。");
         }
-        return receiveKeyPressedFrame.get(key) >= 0;
+        return pressedFrame.get(key);
     }
 
     @Override
@@ -37,9 +35,9 @@ public class KeyReceiver implements KeyListener {
             return;
         }
         short keycode = keyEvent.getKeyCode();
-        if (receiveKeyPressedFrame.containsKey(keycode)) {
-            receiveKeyPressedFrame.replace(keycode,
-                    receiveKeyPressedFrame.get(keycode) + 1);
+        if (pressedFrame.containsKey(keycode)) {
+            pressedFrame.replace(keycode,
+                    pressedFrame.get(keycode) + 1);
         }
     }
 
@@ -48,18 +46,18 @@ public class KeyReceiver implements KeyListener {
         if (keyEvent.isAutoRepeat()) {
             return;
         }
-        if (receiveKeyPressedFrame.containsKey(keyEvent.getKeyCode())) {
-            receiveKeyPressedFrame.put(keyEvent.getKeyCode(), -1);
+        if (pressedFrame.containsKey(keyEvent.getKeyCode())) {
+            pressedFrame.put(keyEvent.getKeyCode(), -1);
         }
     }
 
     public void resetKey(short key) {
-        receiveKeyPressedFrame.put(key, -1);
+        pressedFrame.put(key, -1);
     }
 
     private static final BiFunction<Short, Integer, Integer> replaceFunction = (k, v) -> v >= 0 ? v + 1 : -1;
 
     public void increaseKeyPressedFrame() {
-        this.receiveKeyPressedFrame.replaceAll(replaceFunction);
+        this.pressedFrame.replaceAll(replaceFunction);
     }
 }
