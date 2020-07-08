@@ -126,7 +126,6 @@ public class GLDisplay {
             GL2 gl2 = glAutoDrawable.getGL().getGL2();
             gl2.glClear(GL2.GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            arg.addFrameCount();
             onDisplay.task(arg);
             onRender.render(GLDisplay.this, glAutoDrawable);
         }

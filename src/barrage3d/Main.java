@@ -1,5 +1,7 @@
 package barrage3d;
 
+import barrage3d.attack.Attack;
+import barrage3d.attack.TestAttack;
 import barrage3d.display.GLDisplay;
 import barrage3d.glrenderer.GLRenderer;
 import barrage3d.keyboard.VirtualKey;
@@ -10,9 +12,10 @@ import barrage3d.utility.ColorUtility;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.jogamp.newt.event.KeyEvent.*;
@@ -25,16 +28,22 @@ public class Main {
     private static List<TaskCallable> taskCallableList;
     private static List<GLRenderer> glRendererList;
 
+    //攻撃
+    private static Attack attack;
+    private static Set<Bullet> bulletSet;
+    private static Player player;
+
     private static final float[] positionLight = new float[]{0, 0, 0, 1},
             ambientLight = new float[]{0.5F, 0.5F, 0.5F, 1F};
 
     public static void main(String[] args) {
         taskCallableList = new CopyOnWriteArrayList<>();
         glRendererList = new CopyOnWriteArrayList<>();
+        bulletSet = new HashSet<>();
 
         glDisplay = GLDisplay.getInstance(Main::task, Main::render);
 
-        Player player = new NormalPlayer(0, 0, 1);
+        player = new NormalPlayer(0, 0, 1);
 
         EnumMap<VirtualKey, Short> keyAllocation = new EnumMap<>(VirtualKey.class);
         keyAllocation.put(VirtualKey.Escape, VK_ESCAPE);
@@ -46,25 +55,14 @@ public class Main {
         keyReceiver = new VirtualKeyReceiver(keyAllocation);
         keyReceiver.consumeKeyReceiver(glDisplay::bindKeyReceiver);
 
-        List<Bullet> bullet = new ArrayList<>();
-
-        for (float angle = 0; angle < Math.PI * 2; angle += Math.PI / 10) {
-            for (float angle2 = 0; angle2 < Math.PI * 2; angle2 += Math.PI / 10) {
-                float[] speed = new float[]{
-                        0.005F * (float) (Math.cos(angle) * Math.cos(angle2)),
-                        0.005F * (float) (Math.sin(angle2)),
-                        0.005F * (float) (-Math.sin(angle) * Math.cos(angle2))};
-                bullet.add(NormalBullet.create(0, 0, 0, speed));
-            }
-        }
+        attack = new TestAttack(player, new Enemy());
 
         taskCallableList.add(new PlayerMover(player, keyReceiver));
-        taskCallableList.add((arg) -> bullet.forEach(Bullet::move));
 
         glRendererList.add(new PlayerRenderer(player));
         glRendererList.add((glDisplay1, glAutoDrawable) -> {
             GL2 gl2 = glAutoDrawable.getGL().getGL2();
-            bullet.forEach(b -> {
+            bulletSet.forEach(b -> {
                         gl2.glPushMatrix();
                         gl2.glTranslated(b.getX(), b.getY(), b.getZ());
                         gl2.glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,
@@ -79,12 +77,46 @@ public class Main {
     public static void task(TaskCallable.TaskCallArgument arg) {
         keyReceiver.increaseKeyPressedFrame();
         taskCallableList.forEach(t -> t.task(arg));
+
+        //攻撃
+        attack.task(arg);
+
+        bulletSet.addAll(attack.getNewBullets());
+        bulletSet.forEach(Bullet::move);
+
+        float bounds = 1.2F;
+        bulletSet.removeIf(bullet -> bullet.getX() < -bounds || bounds < bullet.getX() ||
+                bullet.getY() < -bounds || bounds < bullet.getY() ||
+                bullet.getZ() < -bounds || bounds < bullet.getZ());
+
+        if (player.getX() < -1) {
+            player.setX(-1);
+        } else if (player.getX() > 1) {
+            player.setX(1);
+        }
+        if (player.getY() < -1) {
+            player.setY(-1);
+        } else if (player.getY() > 1) {
+            player.setY(1);
+        }
+        if (player.getZ() < -1) {
+            player.setZ(-1);
+        } else if (player.getZ() > 1) {
+            player.setZ(1);
+        }
     }
 
     public static void render(GLDisplay display, GLAutoDrawable autoDrawable) {
         GL2 gl = autoDrawable.getGL().getGL2();
+
+        gl.glLoadIdentity();
+        display.getGLU().gluPerspective(30.0, display.getWidthByHeight(), 3.5, 100.0);
+        display.getGLU().gluLookAt(player.getX(), player.getY(), 5, 0, 0, 0, 0, 1, 0);
+
         gl.glLightfv(GL_LIGHT0, GL_POSITION, positionLight, 0);
         gl.glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight, 0);
         glRendererList.forEach(r -> r.render(display, autoDrawable));
+
+        display.getGLUT().glutWireCube(2);
     }
 }
