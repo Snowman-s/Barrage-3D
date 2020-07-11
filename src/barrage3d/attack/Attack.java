@@ -40,6 +40,15 @@ public abstract class Attack implements TaskCallable, GLRenderer {
     }
 
     /**
+     * 与えられた弾を、新しい弾として登録します。
+     *
+     * @param bullet 登録する弾
+     */
+    protected void registerBullet(Bullet bullet) {
+        newBullets.add(bullet);
+    }
+
+    /**
      * 与えられた弾のコレクションを、新しい弾として登録します。
      *
      * @param bullets 登録するコレクション

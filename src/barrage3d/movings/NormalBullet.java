@@ -1,7 +1,7 @@
 package barrage3d.movings;
 
 /**
- * ただ真っすぐ進む弾を定義するクラス。
+ * ただ真っすぐ進む弾を定義するクラス。通常はこれを使用します。
  */
 public class NormalBullet extends Bullet {
     protected NormalBullet() {

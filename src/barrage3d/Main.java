@@ -33,7 +33,7 @@ public class Main {
     private static Set<Bullet> bulletSet;
     private static Player player;
 
-    private static final float[] positionLight = new float[]{0, 0, 0, 1},
+    private static final float[] positionLight = new float[]{0, 0, 1, 1},
             ambientLight = new float[]{0.5F, 0.5F, 0.5F, 1F};
 
     public static void main(String[] args) {
@@ -51,6 +51,8 @@ public class Main {
         keyAllocation.put(VirtualKey.Down, VK_DOWN);
         keyAllocation.put(VirtualKey.Left, VK_LEFT);
         keyAllocation.put(VirtualKey.Right, VK_RIGHT);
+        keyAllocation.put(VirtualKey.Forward, VK_A);
+        keyAllocation.put(VirtualKey.Backward, VK_Z);
 
         keyReceiver = new VirtualKeyReceiver(keyAllocation);
         keyReceiver.consumeKeyReceiver(glDisplay::bindKeyReceiver);
@@ -77,6 +79,10 @@ public class Main {
     public static void task(TaskCallable.TaskCallArgument arg) {
         keyReceiver.increaseKeyPressedFrame();
         taskCallableList.forEach(t -> t.task(arg));
+        if (keyReceiver.isPressed(VirtualKey.Escape, 1)) {
+            glDisplay.endWindow();
+            return;
+        }
 
         //攻撃
         attack.task(arg);
@@ -111,7 +117,7 @@ public class Main {
 
         gl.glLoadIdentity();
         display.getGLU().gluPerspective(30.0, display.getWidthByHeight(), 3.5, 100.0);
-        display.getGLU().gluLookAt(player.getX(), player.getY(), 5, 0, 0, 0, 0, 1, 0);
+        display.getGLU().gluLookAt(player.getX(), player.getY(), player.getZ() + 4, 0, 0, 0, 0, 1, 0);
 
         gl.glLightfv(GL_LIGHT0, GL_POSITION, positionLight, 0);
         gl.glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight, 0);
