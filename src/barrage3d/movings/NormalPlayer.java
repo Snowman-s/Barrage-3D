@@ -15,4 +15,9 @@ public class NormalPlayer extends Player {
     public float speed() {
         return 0.02F;
     }
+
+    @Override
+    public float getCollisionRadius() {
+        return 0.05F;
+    }
 }

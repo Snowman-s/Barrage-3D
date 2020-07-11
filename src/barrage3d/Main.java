@@ -110,6 +110,15 @@ public class Main {
         } else if (player.getZ() > 1) {
             player.setZ(1);
         }
+
+        for (Bullet bullet : bulletSet) {
+            boolean hit = HitChecker.hit(bullet, player);
+
+            if (hit) {
+                System.out.println("hit!");
+                break;
+            }
+        }
     }
 
     public static void render(GLDisplay display, GLAutoDrawable autoDrawable) {

@@ -1,9 +1,11 @@
 package barrage3d.movings;
 
+import barrage3d.movings.collision.HitCircleObject;
+
 /**
  * プレイヤーの情報(位置、速度、形状)を保持するクラス。速さの実装は下位クラスに任される。
  */
-public abstract class Player extends LocateObject {
+public abstract class Player extends LocateObject implements HitCircleObject {
     public Player() {
     }
 

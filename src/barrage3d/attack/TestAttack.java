@@ -25,7 +25,7 @@ public final class TestAttack extends Attack {
                             0.005F * (float) (cos(angle) * cos(angle2)),
                             0.005F * (float) (sin(angle2)),
                             0.005F * (float) (-sin(angle) * cos(angle2))};
-                    registerBullet(NormalBullet.create(enemy.getX(), enemy.getY(), enemy.getZ(), speed));
+                    registerBullet(NormalBullet.create(enemy.getX(), enemy.getY(), enemy.getZ(), speed, 0.05F));
                 }
             }
         }
