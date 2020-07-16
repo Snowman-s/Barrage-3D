@@ -21,11 +21,11 @@ public final class TestAttack extends Attack {
 
             for (float angle = 0; angle < PI * 2; angle += PI / 10) {
                 for (float angle2 = 0; angle2 < PI * 2; angle2 += PI / 10) {
-                    float[] speed = new float[]{
+                    registerBullet(NormalBullet.create(enemy.getX(), enemy.getY(), enemy.getZ(),
                             0.005F * (float) (cos(angle) * cos(angle2)),
                             0.005F * (float) (sin(angle2)),
-                            0.005F * (float) (-sin(angle) * cos(angle2))};
-                    registerBullet(NormalBullet.create(enemy.getX(), enemy.getY(), enemy.getZ(), speed, 0.05F));
+                            0.005F * (float) (-sin(angle) * cos(angle2)),
+                            0.05F));
                 }
             }
         }

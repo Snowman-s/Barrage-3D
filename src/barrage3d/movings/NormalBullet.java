@@ -7,28 +7,30 @@ import barrage3d.movings.collision.HitCircleObject;
  */
 public class NormalBullet extends Bullet implements HitCircleObject {
     protected NormalBullet() {
-        this(0, 0, 0, new float[]{0, 0, 0}, 0);
+        this(0, 0, 0, 0, 0, 0, 0);
     }
 
-    protected NormalBullet(float x, float y, float z, float[] speed, float collisionRadius) {
+    protected NormalBullet(float x, float y, float z, float speedX, float speedY, float speedZ, float collisionRadius) {
         super(x, y, z);
 
-        this.speed = speed;
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.speedZ = speedZ;
         this.collisionRadius = collisionRadius;
     }
 
-    float[] speed;
+    float speedX, speedY, speedZ;
     float collisionRadius;
 
     @Override
     public void move() {
-        addX(speed[0]);
-        addY(speed[1]);
-        addZ(speed[2]);
+        addX(speedX);
+        addY(speedY);
+        addZ(speedZ);
     }
 
-    public static NormalBullet create(float x, float y, float z, float[] speed, float collisionRadius) {
-        return new NormalBullet(x, y, z, speed, collisionRadius);
+    public static NormalBullet create(float x, float y, float z, float speedX, float speedY, float speedZ, float collisionRadius) {
+        return new NormalBullet(x, y, z, speedX, speedY, speedZ, collisionRadius);
     }
 
     @Override
