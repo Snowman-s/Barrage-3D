@@ -50,4 +50,10 @@ public abstract class LocateObject {
     public void addZ(float dz) {
         this.z += dz;
     }
+
+    public void setXYZ(float x, float y, float z) {
+        setX(x);
+        setY(y);
+        setZ(z);
+    }
 }
