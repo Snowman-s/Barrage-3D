@@ -1,6 +1,7 @@
 package barrage3d.movings;
 
 import barrage3d.movings.collision.HitCircleObject;
+import barrage3d.utility.ColorUtility;
 
 /**
  * ただ真っすぐ進む弾を定義するクラス。通常はこれを使用します。
@@ -21,6 +22,9 @@ public class NormalBullet extends Bullet implements HitCircleObject {
 
     float speedX, speedY, speedZ;
     float collisionRadius;
+
+    @Deprecated
+    public float[] color = ColorUtility.getColor(1, 0, 0, 1);
 
     @Override
     public void move() {

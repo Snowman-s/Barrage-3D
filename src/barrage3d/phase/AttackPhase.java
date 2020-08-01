@@ -43,9 +43,10 @@ public class AttackPhase extends Phase {
             bulletSet.forEach(b -> {
                         gl2.glPushMatrix();
                         gl2.glTranslated(b.getX(), b.getY(), b.getZ());
-                        gl2.glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,
-                                ColorUtility.getColor(1, 1, 0, 1), 0);
-                        glDisplay.getGLUT().glutSolidCube(0.1F);
+                        if (b instanceof NormalBullet) {
+                            gl2.glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, ((NormalBullet) b).color, 0);
+                            glDisplay.getGLUT().glutSolidCube(((NormalBullet) b).getCollisionRadius() * 2);
+                        }
                         gl2.glPopMatrix();
                     }
             );

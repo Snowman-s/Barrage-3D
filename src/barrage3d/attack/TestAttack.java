@@ -4,6 +4,8 @@ import barrage3d.movings.Enemy;
 import barrage3d.movings.NormalBullet;
 import barrage3d.movings.Player;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static java.lang.Math.*;
 
 public final class TestAttack extends Attack {
@@ -19,13 +21,20 @@ public final class TestAttack extends Attack {
         if (taskEndCount % 200 == 0) {
             Enemy enemy = getEnemy();
 
-            for (float angle = 0; angle < PI * 2; angle += PI / 10) {
+            for (float angle = 0; angle < PI; angle += PI / 10) {
                 for (float angle2 = 0; angle2 < PI * 2; angle2 += PI / 10) {
-                    registerBullet(NormalBullet.create(enemy.getX(), enemy.getY(), enemy.getZ(),
+                    NormalBullet bullet = NormalBullet.create(enemy.getX(), enemy.getY(), enemy.getZ(),
                             0.005F * (float) (cos(angle) * cos(angle2)),
                             0.005F * (float) (sin(angle2)),
                             0.005F * (float) (-sin(angle) * cos(angle2)),
-                            0.05F));
+                            ThreadLocalRandom.current().nextFloat() * 0.1F + 0.01F);
+
+                    bullet.color = new float[]{
+                            (1 + (float) cos(angle2)) / 2F,
+                            (1 + (float) cos(angle2 + PI * 2 / 3)) / 2F,
+                            (1 + (float) cos(angle2 + PI * 4 / 3)) / 2F, 1};
+
+                    registerBullet(bullet);
                 }
             }
         }
