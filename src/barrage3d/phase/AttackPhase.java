@@ -3,11 +3,12 @@ package barrage3d.phase;
 import barrage3d.attack.Attack;
 import barrage3d.attack.TestAttack;
 import barrage3d.display.GLDisplay;
+import barrage3d.glrenderer.BulletsRenderer;
 import barrage3d.glrenderer.GLRenderer;
 import barrage3d.keyboard.VirtualKeyReceiver;
 import barrage3d.movings.*;
 import barrage3d.taskcallable.TaskCallable;
-import barrage3d.utility.ColorUtility;
+import barrage3d.texture.TextureLoader;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 
@@ -15,15 +16,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.jogamp.opengl.GL.GL_DEPTH_TEST;
-import static com.jogamp.opengl.GL.GL_FRONT_AND_BACK;
 import static com.jogamp.opengl.GL2ES3.GL_QUADS;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 
 public class AttackPhase extends Phase {
     //攻撃
     private Attack attack;
+    //private final Set<Bullet> bulletSet = new TreeSet<>(Comparator.comparingDouble(LocateObject::getZ));
     private final Set<Bullet> bulletSet = new HashSet<>();
-    private final Player player = new NormalPlayer(0, 0, 1);
+    private final Player player = new NormalPlayer(0, 0, 0);
 
     private final TaskCallable playerMover;
     private final GLRenderer playerRenderer, bulletsRenderer;
@@ -38,19 +39,7 @@ public class AttackPhase extends Phase {
         attack = new TestAttack(player, new Enemy());
         playerMover = new PlayerMover(player, keyReceiver);
         playerRenderer = new PlayerRenderer(player);
-        bulletsRenderer = (glDisplay1, glAutoDrawable) -> {
-            GL2 gl2 = glAutoDrawable.getGL().getGL2();
-            bulletSet.forEach(b -> {
-                        gl2.glPushMatrix();
-                        gl2.glTranslated(b.getX(), b.getY(), b.getZ());
-                        if (b instanceof NormalBullet) {
-                            gl2.glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, ((NormalBullet) b).color, 0);
-                            glDisplay.getGLUT().glutSolidCube(((NormalBullet) b).getCollisionRadius() * 2);
-                        }
-                        gl2.glPopMatrix();
-                    }
-            );
-        };
+        bulletsRenderer = new BulletsRenderer(bulletSet);
     }
 
     @Override
@@ -104,38 +93,44 @@ public class AttackPhase extends Phase {
         gl.glLoadIdentity();
 
         glDisplay.getGLU().gluPerspective(30.0, glDisplay.getWidthByHeight(), 3.5, 100.0);
-
         glDisplay.getGLU().gluLookAt(player.getX(), player.getY(), player.getZ() + 4, 0, 0, 0, 0, 1, 0);
 
         gl.glLightfv(GL_LIGHT0, GL_POSITION, positionLight, 0);
         gl.glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight, 0);
 
-        playerRenderer.render(glDisplay, glAutoDrawable);
         bulletsRenderer.render(glDisplay, glAutoDrawable);
+        playerRenderer.render(glDisplay, glAutoDrawable);
 
         glDisplay.getGLUT().glutWireCube(PLAYER_MOVE_BOUND * 2);
 
         //弾に当たった時のフラッシュ
-        gl.glPushMatrix();
+        if (player.isInvincible()) {
+            gl.glPushMatrix();
 
-        gl.glLoadIdentity();
+            gl.glLoadIdentity();
 
-        gl.glDisable(GL_DEPTH_TEST);
-        gl.glDisable(GL_LIGHTING);
+            gl.glDisable(GL_DEPTH_TEST);
+            gl.glDisable(GL_LIGHTING);
 
-        gl.glColor4f(1, 1, 1, player.getInvincibleFrame() / 60F);
-        gl.glBegin(GL_QUADS);
+            gl.glColor4f(1, 1, 1, player.getInvincibleFrame() / 60F);
+            gl.glBegin(GL_QUADS);
 
-        gl.glVertex3d(-1, -1, 0);
-        gl.glVertex3d(1, -1, 0);
-        gl.glVertex3d(1, 1, 0);
-        gl.glVertex3d(-1, 1, 0);
+            gl.glVertex3d(-1, -1, 0);
+            gl.glVertex3d(1, -1, 0);
+            gl.glVertex3d(1, 1, 0);
+            gl.glVertex3d(-1, 1, 0);
 
-        gl.glEnd();
+            gl.glEnd();
 
-        gl.glEnable(GL_LIGHTING);
-        gl.glEnable(GL_DEPTH_TEST);
+            gl.glEnable(GL_LIGHTING);
+            gl.glEnable(GL_DEPTH_TEST);
 
-        gl.glPopMatrix();
+            gl.glPopMatrix();
+        }
+    }
+
+    @Override
+    public void loadImage(GL2 gl) {
+        TextureLoader.loadAllTexture();
     }
 }

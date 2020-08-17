@@ -12,6 +12,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_LIGHT0;
@@ -21,12 +22,12 @@ import static java.lang.System.exit;
 public class GLDisplay {
     private final GLDisplayInnerClass glDisplayInnerClass;
 
-    private GLDisplay(TaskCallable onDisplay, GLRenderer onRender) {
-        glDisplayInnerClass = new GLDisplayInnerClass(onDisplay, onRender);
+    private GLDisplay(Consumer<GL2> onInit, TaskCallable onDisplay, GLRenderer onRender) {
+        glDisplayInnerClass = new GLDisplayInnerClass(onInit,onDisplay, onRender);
     }
 
-    public static GLDisplay getInstance(TaskCallable onDisplay, GLRenderer glRenderer) {
-        return new GLDisplay(Objects.requireNonNull(onDisplay), Objects.requireNonNull(glRenderer));
+    public static GLDisplay getInstance(Consumer<GL2> onInit, TaskCallable onDisplay, GLRenderer glRenderer) {
+        return new GLDisplay(Objects.requireNonNull(onInit), Objects.requireNonNull(onDisplay), Objects.requireNonNull(glRenderer));
     }
 
     public int getWidth() {
@@ -68,12 +69,14 @@ public class GLDisplay {
         private final GLU glu;
         private final GLUT glut;
 
+        private final Consumer<GL2> onInit;
         private final TaskCallable onDisplay;
         private final GLRenderer onRender;
 
         private final TaskCallable.TaskCallArgument arg;
 
-        private GLDisplayInnerClass(TaskCallable onDisplay, GLRenderer onRender) {
+        private GLDisplayInnerClass(Consumer<GL2> onInit,TaskCallable onDisplay, GLRenderer onRender) {
+            this.onInit = onInit;
             this.onDisplay = onDisplay;
             this.onRender = onRender;
             arg = new TaskCallable.TaskCallArgument();
@@ -114,6 +117,8 @@ public class GLDisplay {
             gl.glCullFace(GL_BACK);
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             animator.setUpdateFPSFrames(60, null);
+
+            onInit.accept(gl);
         }
 
         @Override

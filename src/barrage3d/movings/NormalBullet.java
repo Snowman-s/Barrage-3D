@@ -33,6 +33,16 @@ public class NormalBullet extends Bullet implements HitCircleObject {
         addZ(speedZ);
     }
 
+    @Override
+    public float imageWidth() {
+        return collisionRadius * 2;
+    }
+
+    @Override
+    public float imageHeight() {
+        return collisionRadius * 2;
+    }
+
     public static NormalBullet create(float x, float y, float z, float speedX, float speedY, float speedZ, float collisionRadius) {
         return new NormalBullet(x, y, z, speedX, speedY, speedZ, collisionRadius);
     }

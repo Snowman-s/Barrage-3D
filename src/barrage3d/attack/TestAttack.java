@@ -27,12 +27,7 @@ public final class TestAttack extends Attack {
                             0.005F * (float) (cos(angle) * cos(angle2)),
                             0.005F * (float) (sin(angle2)),
                             0.005F * (float) (-sin(angle) * cos(angle2)),
-                            ThreadLocalRandom.current().nextFloat() * 0.1F + 0.01F);
-
-                    bullet.color = new float[]{
-                            (1 + (float) cos(angle2)) / 2F,
-                            (1 + (float) cos(angle2 + PI * 2 / 3)) / 2F,
-                            (1 + (float) cos(angle2 + PI * 4 / 3)) / 2F, 1};
+                            0.1F);
 
                     registerBullet(bullet);
                 }

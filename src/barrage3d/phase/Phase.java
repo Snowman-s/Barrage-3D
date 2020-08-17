@@ -4,6 +4,7 @@ import barrage3d.display.GLDisplay;
 import barrage3d.glrenderer.GLRenderer;
 import barrage3d.keyboard.VirtualKeyReceiver;
 import barrage3d.taskcallable.TaskCallable;
+import com.jogamp.opengl.GL2;
 
 /**
  * 現在のフェイズに応じたタスクと描画を提供するクラス。
@@ -20,6 +21,8 @@ public abstract class Phase implements TaskCallable, GLRenderer {
     public static Phase createPhase(PhaseType type, GLDisplay glDisplay, VirtualKeyReceiver virtualKeyReceiver) {
         return type.createPhase(glDisplay, virtualKeyReceiver);
     }
+
+    public abstract void loadImage(GL2 gl);
 
     public enum PhaseType {
         Attack {

@@ -5,6 +5,7 @@ import barrage3d.keyboard.VirtualKey;
 import barrage3d.keyboard.VirtualKeyReceiver;
 import barrage3d.phase.Phase;
 import barrage3d.taskcallable.TaskCallable;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 
 import java.util.EnumMap;
@@ -18,7 +19,7 @@ public class Main {
     private static Phase phase;
 
     public static void main(String[] args) {
-        glDisplay = GLDisplay.getInstance(Main::task, Main::render);
+        glDisplay = GLDisplay.getInstance(Main::init, Main::task, Main::render);
 
         EnumMap<VirtualKey, Short> keyAllocation = new EnumMap<>(VirtualKey.class);
         keyAllocation.put(VirtualKey.Escape, VK_ESCAPE);
@@ -31,8 +32,11 @@ public class Main {
 
         keyReceiver = new VirtualKeyReceiver(keyAllocation);
         keyReceiver.consumeKeyReceiver(glDisplay::bindKeyReceiver);
+    }
 
+    public static void init(GL2 gl) {
         phase = Phase.createPhase(Phase.PhaseType.Attack, glDisplay, keyReceiver);
+        phase.loadImage(gl);
     }
 
     public static void task(TaskCallable.TaskCallArgument arg) {
