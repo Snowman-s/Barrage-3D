@@ -18,6 +18,6 @@ public class NormalPlayer extends Player {
 
     @Override
     public float getCollisionRadius() {
-        return 0.05F;
+        return 0.05F * 0.1F;
     }
 }

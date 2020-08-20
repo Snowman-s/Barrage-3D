@@ -28,7 +28,6 @@ public class BulletsRenderer extends AbstractGLRenderer {
     protected void renderBody(GLDisplay glDisplay, GLAutoDrawable glAutoDrawable) {
         GL2 gl2 = glAutoDrawable.getGL().getGL2();
         gl2.glDisable(GL_LIGHTING);
-       // gl2.glColor4f(1, 1, 1, 1);
         gl2.glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
         bulletSet.stream().sorted(Comparator.comparingDouble(LocateObject::getZ)).forEach(b -> {
                     gl2.glDisable(GL_DEPTH_TEST);

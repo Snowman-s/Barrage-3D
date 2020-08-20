@@ -4,8 +4,6 @@ import barrage3d.movings.Enemy;
 import barrage3d.movings.NormalBullet;
 import barrage3d.movings.Player;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import static java.lang.Math.*;
 
 public final class TestAttack extends Attack {

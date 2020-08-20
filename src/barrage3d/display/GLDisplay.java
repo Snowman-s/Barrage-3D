@@ -12,6 +12,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import static com.jogamp.opengl.GL.*;
@@ -79,7 +80,7 @@ public class GLDisplay {
             this.onInit = onInit;
             this.onDisplay = onDisplay;
             this.onRender = onRender;
-            arg = new TaskCallable.TaskCallArgument();
+            arg = new TaskCallable.TaskCallArgument(new Random());
 
             GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2));
             glWindow = GLWindow.create(caps);

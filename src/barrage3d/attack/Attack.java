@@ -18,6 +18,9 @@ import java.util.Set;
 public abstract class Attack implements TaskCallable, GLRenderer {
     private final Player player;
     private final Enemy enemy;
+
+    private int limitFrame = 600;
+    private int elapsedFrame = 0;
     /**
      * 新しい弾を保持するセット
      */
@@ -68,11 +71,25 @@ public abstract class Attack implements TaskCallable, GLRenderer {
     @Override
     public final void task(TaskCallArgument arg) {
         taskAttack(arg);
+
+        elapsedFrame = Integer.min(elapsedFrame + 1, getLimitFrame());
     }
 
     @Override
     public void render(GLDisplay glDisplay, GLAutoDrawable glAutoDrawable) {
 
+    }
+
+    protected void setLimitFrame(int limitFrame) {
+        this.limitFrame = limitFrame;
+    }
+
+    public int getLimitFrame() {
+        return limitFrame;
+    }
+
+    public int getRemainFrame() {
+        return getLimitFrame() - elapsedFrame;
     }
 
     /**
